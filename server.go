@@ -69,6 +69,18 @@ func main() {
 
 	})
 
+	// Check Key is ok
+	m.Get("/debug/:token", func(params martini.Params, r render.Render) string {
+		token, err := jwt.Parse(params["token"], func(token *jwt.Token) ([]byte, error) {
+			return []byte(SecretKey), nil
+		})
+		if err == nil && token.Valid {
+			return "User id: " + token.Claims["userid"].(string)
+		} else {
+			return "Invalid"
+		}
+	})
+
 	// Only accesible if authenticated
 	m.Post("/secret", func() {
 
